@@ -16,3 +16,10 @@ cd build
 cmake ..
 make
 ```
+
+## test
+
+```sh
+cd build
+./deps/quickjs/qjs ../test_libqu.js
+```
