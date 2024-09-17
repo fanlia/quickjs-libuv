@@ -14,4 +14,5 @@ sh install-deps.sh
 mkdir build
 cd build
 cmake ..
+make
 ```
