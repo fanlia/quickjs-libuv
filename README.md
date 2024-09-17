@@ -8,3 +8,10 @@ quickjs libuv
 ```sh
 sh install-deps.sh
 ```
+
+## build
+```sh
+mkdir build
+cd build
+cmake ..
+```
