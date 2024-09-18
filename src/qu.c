@@ -1,12 +1,18 @@
 #include <uv.h>
 #include <quickjs.h>
+#include <assert.h>
+#include <stdio.h>
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
+#include "util.c"
 #include "version.c"
+#include "idle.c"
 
 static const JSCFunctionListEntry qu_funcs[] = {
     JS_CFUNC_DEF("version", 0, qu_version ),
     JS_CFUNC_DEF("version_string", 0, qu_version_string ),
+    JS_CFUNC_DEF("run", 0, qu_run ),
+    JS_CFUNC_DEF("idle_test", 0, qu_idle_test ),
 };
 
 static int qu_init(JSContext *ctx, JSModuleDef *m)
