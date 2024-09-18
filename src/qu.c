@@ -12,7 +12,7 @@ static const JSCFunctionListEntry qu_funcs[] = {
     JS_CFUNC_DEF("version", 0, qu_version ),
     JS_CFUNC_DEF("version_string", 0, qu_version_string ),
     JS_CFUNC_DEF("run", 0, qu_run ),
-    JS_CFUNC_DEF("idle_test", 0, qu_idle_test ),
+    JS_CFUNC_DEF("idle_test", 1, qu_idle_test ),
 };
 
 static int qu_init(JSContext *ctx, JSModuleDef *m)

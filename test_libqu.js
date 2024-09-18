@@ -9,7 +9,11 @@ console.log("version hex=", version());
 console.log("version string=", version_string());
 
 console.log('idling...')
-idle_test()
+
+let i
+idle_test(() => {
+  console.log('done');
+})
 
 run()
 console.log('stopped')

@@ -1,3 +1,7 @@
+typedef struct qu_context_t {
+  JSContext *ctx;
+  JSValue func;
+} qu_context_t;
 
 static JSValue qu_result(JSContext *ctx, int status)
 {
