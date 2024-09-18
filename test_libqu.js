@@ -1,5 +1,8 @@
-import { fib } from "./build/libqu.so";
+import {
+  version,
+  version_string,
+} from "./build/libqu.so";
 
-console.log("Hello World");
-console.log("fib(10)=", fib(10));
+console.log("version hex=", version());
+console.log("version string=", version_string());
 

@@ -1,90 +1,37 @@
-#include <stdio.h>
 #include <uv.h>
-
-int64_t counter = 0;
-
-void wait_for_a_while(uv_idle_t* handle) {
-    counter++;
-
-    if (counter >= 10e6)
-        uv_idle_stop(handle);
-}
-
-int test_uv() {
-    uv_idle_t idler;
-
-    uv_idle_init(uv_default_loop(), &idler);
-    uv_idle_start(&idler, wait_for_a_while);
-
-    printf("Idling...\n");
-    uv_run(uv_default_loop(), UV_RUN_DEFAULT);
-
-    uv_loop_close(uv_default_loop());
-    return 0;
-}
-
-/*
- * QuickJS: Example of C module
- *
- * Copyright (c) 2017-2018 Fabrice Bellard
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-#include "quickjs.h"
+#include <quickjs.h>
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
-static int fib(int n)
+static JSValue qu_version(JSContext *ctx, JSValue this_val, int argc, JSValue *argv)
 {
-    if (n <= 0)
-        return 0;
-    else if (n == 1)
-        return 1;
-    else
-        return fib(n - 1) + fib(n - 2);
+    unsigned int res;
+    res = uv_version();
+    return JS_NewUint32(ctx, res);
 }
 
-static JSValue js_fib(JSContext *ctx, JSValue this_val,
-                      int argc, JSValue *argv)
+static JSValue qu_version_string(JSContext *ctx, JSValue this_val, int argc, JSValue *argv)
 {
-    int n, res;
-    if (JS_ToInt32(ctx, &n, argv[0]))
-        return JS_EXCEPTION;
-    res = fib(n);
-    return JS_NewInt32(ctx, res);
+    const char *res;
+    res = uv_version_string();
+    return JS_NewString(ctx, res);
 }
 
-static const JSCFunctionListEntry js_fib_funcs[] = {
-    JS_CFUNC_DEF("fib", 1, js_fib ),
+static const JSCFunctionListEntry qu_funcs[] = {
+    JS_CFUNC_DEF("version", 0, qu_version ),
+    JS_CFUNC_DEF("version_string", 0, qu_version_string ),
 };
 
-static int js_fib_init(JSContext *ctx, JSModuleDef *m)
+static int qu_init(JSContext *ctx, JSModuleDef *m)
 {
-    return JS_SetModuleExportList(ctx, m, js_fib_funcs,
-                                  countof(js_fib_funcs));
+    return JS_SetModuleExportList(ctx, m, qu_funcs, countof(qu_funcs));
 }
 
 JSModuleDef *js_init_module(JSContext *ctx, const char *module_name)
 {
     JSModuleDef *m;
-    m = JS_NewCModule(ctx, module_name, js_fib_init);
+    m = JS_NewCModule(ctx, module_name, qu_init);
     if (!m)
         return NULL;
-    JS_AddModuleExportList(ctx, m, js_fib_funcs, countof(js_fib_funcs));
+    JS_AddModuleExportList(ctx, m, qu_funcs, countof(qu_funcs));
     return m;
 }
